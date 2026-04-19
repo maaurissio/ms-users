@@ -9,6 +9,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 
@@ -20,6 +22,12 @@ public class Usuario extends PanacheEntityBase {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
 
+    @Column(nullable = false, unique = true)
+    public String rut;
+
+    @Column(nullable = false)
+    public String dv;
+
     @Column(nullable = false)
     public String nombre;
 
@@ -30,11 +38,15 @@ public class Usuario extends PanacheEntityBase {
     public String email;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = true)
     public Rol rol;
 
     public Boolean activo = true;
 
-    @Column(name = "sucursal_id")
+    @Column(nullable = true, name = "sucursal_id")
     public Long sucursalId;
 
+    @ManyToOne 
+    @JoinColumn(name = "ciudad_id", nullable = false) 
+    public Ciudad ciudad;
 }
