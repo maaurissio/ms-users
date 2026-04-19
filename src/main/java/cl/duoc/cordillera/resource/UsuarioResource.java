@@ -3,15 +3,16 @@ package cl.duoc.cordillera.resource;
 import java.util.List;
 import java.util.Locale;
 import cl.duoc.cordillera.entity.Usuario;
+import cl.duoc.cordillera.enums.Rol;
 import cl.duoc.cordillera.repository.UsuarioRepository;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
@@ -29,7 +30,13 @@ public class UsuarioResource {
 
     @GET
     public List<Usuario> getAll(){
-        return repository.listAll(); // Retorna los usuarios de la BD
+        return repository.list("activo", true); // Retorna solo usuarios activos
+    }
+
+    @GET
+    @Path("/clientes")
+    public List<Usuario> getClientesActivos() {
+        return repository.list("rol = ?1 and activo = true", Rol.CLIENTE);
     }
 
     @POST
@@ -41,7 +48,7 @@ public class UsuarioResource {
     @GET
     @Path("/{id}")
     public Response getById(@PathParam("id") Long id) {
-        Usuario usuario = repository.findById(id);
+        Usuario usuario = repository.find("id = ?1 and activo = true", id).firstResult();
         if (usuario == null) {
             return Response.status(Response.Status.NOT_FOUND)
                     .entity("Usuario no encontrado")
@@ -54,23 +61,40 @@ public class UsuarioResource {
     @Path("/buscar")
     public List<Usuario> searchByNombre(@QueryParam("nombre") String nombre) {
         if (nombre == null || nombre.isBlank()) {
-            return repository.listAll();
+            return repository.list("activo", true);
         }
 
         String nombreNormalizado = "%" + nombre.toLowerCase(Locale.ROOT) + "%";
-        return repository.list("lower(nombre) like ?1", nombreNormalizado);
+        return repository.list("activo = true and lower(nombre) like ?1", nombreNormalizado);
     }
 
-    @DELETE
-    @Path("/{id}")
+    @PUT
+    @Path("/{id}/desactivar")
     @Transactional
-    public Response deleteById(@PathParam("id") Long id) {
-        boolean eliminado = repository.deleteById(id);
-        if (!eliminado) {
+    public Response deactivateById(@PathParam("id") Long id) {
+        Usuario usuario = repository.findById(id);
+        if (usuario == null) {
             return Response.status(Response.Status.NOT_FOUND)
                     .entity("Usuario no encontrado")
                     .build();
         }
-        return Response.noContent().build();
+
+        usuario.activo = false;
+        return Response.ok(usuario).build();
+    }
+
+    @PUT
+    @Path("/{id}/activar")
+    @Transactional
+    public Response activateById(@PathParam("id") Long id) {
+        Usuario usuario = repository.findById(id);
+        if (usuario == null) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Usuario no encontrado")
+                    .build();
+        }
+
+        usuario.activo = true;
+        return Response.ok(usuario).build();
     }
 }
