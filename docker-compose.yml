@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  # Servicio de Base de Datos para MS-Users
+  db-users:
+    image: postgres:latest
+    container_name: pg-cordillera
+    environment:
+      POSTGRES_USER: usuario_cordillera
+      POSTGRES_PASSWORD: cordillera_pass
+      POSTGRES_DB: db_users
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata_users:/var/lib/postgresql
+    networks:
+      - cordillera-net
+
+# Definición de redes para comunicación entre servicios
+networks:
+  cordillera-net:
+    driver: bridge
+
+# Volúmenes para que los datos no se borren al apagar el contenedor
+volumes:
+  pgdata_users:
