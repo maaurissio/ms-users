@@ -395,6 +395,31 @@ INSERT INTO Ciudad (id, nombre, region_id) VALUES (344, 'Natales', 16);
 INSERT INTO Ciudad (id, nombre, region_id) VALUES (345, 'Torres del Paine', 16);
 INSERT INTO Ciudad (id, nombre, region_id) VALUES (346, 'Chépica', 8);
 
+-- Insertar Usuarios de prueba
+INSERT INTO usuarios (rut, dv, nombre, apellido, email, rol, activo, sucursal_id, ciudad_id)
+VALUES ('17654321', 'K', 'Mauricio', 'Gajardo', 'mauricio.gajardo@cordillera.cl', 'GERENTE', true, 1, 113);
+
+INSERT INTO usuarios (rut, dv, nombre, apellido, email, rol, activo, sucursal_id, ciudad_id)
+VALUES ('18543210', '9', 'Vicente', 'Muñoz', 'vicente.munoz@cordillera.cl', 'OPERADOR', true, 1, 113);
+
+INSERT INTO usuarios (rut, dv, nombre, apellido, email, rol, activo, sucursal_id, ciudad_id)
+VALUES ('19432109', '8', 'Vicente', 'Colicheo', 'vicente.colicheo@cordillera.cl', 'OPERADOR', true, 2, 45);
+
+INSERT INTO usuarios (rut, dv, nombre, apellido, email, rol, activo, sucursal_id, ciudad_id)
+VALUES ('20345678', '7', 'Camila', 'Rojas', 'camila.rojas@cliente.cl', 'CLIENTE', true, null, 113);
+
+INSERT INTO usuarios (rut, dv, nombre, apellido, email, rol, activo, sucursal_id, ciudad_id)
+VALUES ('21456789', '6', 'Diego', 'Soto', 'diego.soto@cliente.cl', 'CLIENTE', true, null, 45);
+
+INSERT INTO usuarios (rut, dv, nombre, apellido, email, rol, activo, sucursal_id, ciudad_id)
+VALUES ('22567890', '5', 'Valentina', 'Pérez', 'valentina.perez@cliente.cl', 'CLIENTE', true, null, 295);
+
+INSERT INTO usuarios (rut, dv, nombre, apellido, email, rol, activo, sucursal_id, ciudad_id)
+VALUES ('23678901', '4', 'Tomás', 'Araya', 'tomas.araya@cliente.cl', 'CLIENTE', true, null, 251);
+
+INSERT INTO usuarios (rut, dv, nombre, apellido, email, rol, activo, sucursal_id, ciudad_id)
+VALUES ('24789012', '3', 'Fernanda', 'Mella', 'fernanda.mella@cliente.cl', 'CLIENTE', true, null, 335);
+
 -- Reiniciar los contadores de ID para que no choquen con futuros inserts manuales
 -- SELECT setval('region_id_seq', (SELECT MAX(id) FROM Region));
 -- SELECT setval('ciudad_id_seq', (SELECT MAX(id) FROM Ciudad));
