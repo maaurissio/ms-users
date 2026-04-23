@@ -1,100 +1,56 @@
 package cl.duoc.cordillera.resource;
 
-import java.util.List;
-import java.util.Locale;
 import cl.duoc.cordillera.entity.Usuario;
-import cl.duoc.cordillera.enums.Rol;
-import cl.duoc.cordillera.repository.UsuarioRepository;
+import cl.duoc.cordillera.service.UsuarioService;
+
 import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.PUT;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-@Path("/users")
+import java.util.List;
+import java.util.UUID;
+
+@Path("/usuarios")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-
-
 public class UsuarioResource {
-    
+
     @Inject
-    UsuarioRepository repository; // Se inyecta el Repository Pattern creado
+    UsuarioService service;
 
     @GET
-    public List<Usuario> getAll(){
-        return repository.list("activo", true); // Retorna solo usuarios activos
-    }
-
-    @GET
-    @Path("/clientes")
-    public List<Usuario> getClientesActivos() {
-        return repository.list("rol = ?1 and activo = true", Rol.CLIENTE);
+    public List<Usuario> getAll() {
+        return service.listarActivos();
     }
 
     @POST
-    @Transactional
-    public void create(Usuario usuario){
-        repository.persist(usuario); // Guarda el nuevo usuario creado
+    public Response create(Usuario usuario) {
+        Usuario nuevo = service.crear(usuario);
+        return Response.status(Response.Status.CREATED).entity(nuevo).build();
     }
 
     @GET
     @Path("/{id}")
-    public Response getById(@PathParam("id") Long id) {
-        Usuario usuario = repository.find("id = ?1 and activo = true", id).firstResult();
-        if (usuario == null) {
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity("Usuario no encontrado")
-                    .build();
-        }
-        return Response.ok(usuario).build();
+    public Usuario getById(@PathParam("id") UUID id) {
+        return service.obtenerPorId(id);
     }
 
     @GET
     @Path("/buscar")
     public List<Usuario> searchByNombre(@QueryParam("nombre") String nombre) {
-        if (nombre == null || nombre.isBlank()) {
-            return repository.list("activo", true);
-        }
-
-        String nombreNormalizado = "%" + nombre.toLowerCase(Locale.ROOT) + "%";
-        return repository.list("activo = true and lower(nombre) like ?1", nombreNormalizado);
+        return service.buscarPorNombre(nombre);
     }
 
     @PUT
     @Path("/{id}/desactivar")
-    @Transactional
-    public Response deactivateById(@PathParam("id") Long id) {
-        Usuario usuario = repository.findById(id);
-        if (usuario == null) {
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity("Usuario no encontrado")
-                    .build();
-        }
-
-        usuario.activo = false;
-        return Response.ok(usuario).build();
+    public Usuario desactivar(@PathParam("id") UUID id) {
+        return service.desactivar(id);
     }
 
     @PUT
     @Path("/{id}/activar")
-    @Transactional
-    public Response activateById(@PathParam("id") Long id) {
-        Usuario usuario = repository.findById(id);
-        if (usuario == null) {
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity("Usuario no encontrado")
-                    .build();
-        }
-
-        usuario.activo = true;
-        return Response.ok(usuario).build();
+    public Usuario activar(@PathParam("id") UUID id) {
+        return service.activar(id);
     }
 }

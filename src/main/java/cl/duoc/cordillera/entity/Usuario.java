@@ -1,26 +1,19 @@
 package cl.duoc.cordillera.entity;
 
-import cl.duoc.cordillera.enums.Rol;
+import cl.duoc.cordillera.enums.EstadoUsuario;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "usuarios")
 public class Usuario extends PanacheEntityBase {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    public UUID id;
 
     @Column(nullable = false, unique = true)
     public String rut;
@@ -34,19 +27,19 @@ public class Usuario extends PanacheEntityBase {
     @Column(nullable = false)
     public String apellido;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false, unique = true)
     public String email;
 
+    @Column(nullable = false)
+    public String passwordHash;
+
     @Enumerated(EnumType.STRING)
-    @Column(nullable = true)
-    public Rol rol;
+    @Column(nullable = false)
+    public EstadoUsuario estado;
 
-    public Boolean activo = true;
+    @Column(nullable = false)
+    public LocalDateTime creadoEn;
 
-    @Column(nullable = true, name = "sucursal_id")
-    public Long sucursalId;
-
-    @ManyToOne 
-    @JoinColumn(name = "ciudad_id", nullable = false) 
-    public Ciudad ciudad;
+    @Column(nullable = false)
+    public LocalDateTime actualizadoEn;
 }
