@@ -1,80 +1,127 @@
-# ms-users
+# MS-Users
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+Microservicio encargado de la gestión de usuarios dentro del sistema.  
+Permite crear, consultar y actualizar usuarios, además de manejar su estado (activo/inactivo).
 
-If you want to learn more about Quarkus, please visit its website: <https://quarkus.io/>.
+---
 
-## Running the application in dev mode
+## Tecnologías
 
-You can run your application in dev mode that enables live coding using:
+- Java 21  
+- Quarkus  
+- PostgreSQL  
+- Docker & Docker Compose  
+- Maven  
 
-```shell script
+---
+
+## Cómo ejecutar el proyecto
+
+### Opción 1: Todo con Docker (recomendado)
+
+```bash
+./mvnw clean package -DskipTests
+docker compose up --build
+```
+
+Levanta:
+- Backend (ms-users)
+- Base de datos (PostgreSQL)
+
+### Opción 2: Desarrollo (backend local + DB en Docker)
+
+```bash
+docker compose up -d
 ./mvnw quarkus:dev
 ```
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at <http://localhost:8080/q/dev/>.
+Permite trabajar con hot reload
 
-## Packaging and running the application
+---
 
-The application can be packaged using:
+## Acceso a la API
 
-```shell script
-./mvnw package
+**Swagger UI**  
+http://localhost:8082/q/swagger-ui
+
+---
+
+## Endpoints principales
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/usuarios` | Listar usuarios activos |
+| POST | `/usuarios` | Crear usuario |
+| GET | `/usuarios/{id}` | Buscar usuario por ID |
+| GET | `/usuarios/buscar?nombre=` | Buscar por nombre |
+| PUT | `/usuarios/{id}/activar` | Activar usuario |
+| PUT | `/usuarios/{id}/desactivar` | Desactivar usuario |
+
+---
+
+## Base de datos
+
+**Motor:** PostgreSQL  
+**Nombre BD:** db_users
+
+**Conexión dentro de Docker**
+```
+jdbc:postgresql://db-users:5432/db_users
 ```
 
-It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directory.
-
-The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.
-
-If you want to build an _über-jar_, execute the following command:
-
-```shell script
-./mvnw package -Dquarkus.package.jar.type=uber-jar
+**Conexión local**
+```
+jdbc:postgresql://localhost:5432/db_users
 ```
 
-The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
+---
 
-## Creating a native executable
+## Comandos útiles
 
-You can create a native executable using:
-
-```shell script
-./mvnw package -Dnative
+```bash
+docker compose up -d       # Levantar servicios
+docker compose down        # Detener servicios
+docker ps                  # Ver contenedores
+docker logs pg-cordillera  # Ver logs de la BD
 ```
 
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
+---
 
-```shell script
-./mvnw package -Dnative -Dquarkus.native.container-build=true
+## Estructura del proyecto
+
+```
+src/
+ ├── entity/
+ ├── repository/
+ ├── service/
+ ├── resource/
+ └── enums/
 ```
 
-You can then execute your native executable with: `./target/ms-users-1.0.0-SNAPSHOT-runner`
+---
 
-If you want to learn more about building native executables, please consult <https://quarkus.io/guides/maven-tooling>.
+## Notas importantes
 
-## Related Guides
+- Si falla Docker, asegúrate de haber generado el build:
+  ```bash
+  ./mvnw clean package -DskipTests
+  ```
 
-- Hibernate Validator ([guide](https://quarkus.io/guides/validation)): Validate object properties (field, getter) and method parameters for your beans (REST, CDI, Jakarta Persistence)
-- SmallRye OpenAPI ([guide](https://quarkus.io/guides/openapi-swaggerui)): Document your REST APIs with OpenAPI - comes with Swagger UI
-- REST Jackson ([guide](https://quarkus.io/guides/rest#json-serialisation)): Jackson serialization support for Quarkus REST. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on it
-- Hibernate ORM with Panache ([guide](https://quarkus.io/guides/hibernate-orm-panache)): Simplify your persistence code for Hibernate ORM via the active record or the repository pattern
-- JDBC Driver - PostgreSQL ([guide](https://quarkus.io/guides/datasource)): Connect to the PostgreSQL database via JDBC
+- No mezclar configuraciones de conexión:
+  - `localhost` → ejecución local
+  - `db-users` → ejecución en Docker
 
-## Provided Code
+---
 
-### Hibernate ORM
+## Ejemplo de JSON para crear usuario
 
-Create your first JPA entity
-
-[Related guide section...](https://quarkus.io/guides/hibernate-orm)
-
-
-[Related Hibernate with Panache section...](https://quarkus.io/guides/hibernate-orm-panache)
-
-
-### REST
-
-Easily start your REST Web Services
-
-[Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
+```json
+{
+  "rut": "12345678",
+  "dv": "9",
+  "nombre": "Vicente",
+  "apellido": "Muñoz",
+  "email": "vicente@test.cl",
+  "passwordHash": "123456"
+}
+```
