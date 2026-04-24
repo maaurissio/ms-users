@@ -92,10 +92,10 @@ docker logs pg-cordillera  # Ver logs de la BD
 ```
 src/
  ├── entity/
+ ├── enums/
  ├── repository/
- ├── service/
  ├── resource/
- └── enums/
+ └── service/
 ```
 
 ---
@@ -123,5 +123,16 @@ src/
   "apellido": "Muñoz",
   "email": "vicente@test.cl",
   "passwordHash": "123456"
+}
+```
+---
+
+
+## Ejemplo de JSON para crear rol
+
+```json
+{
+  "nombre": "ADMIN",
+  "descripcion": "Administrador del sistema"
 }
 ```
