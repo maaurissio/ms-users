@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import cl.duoc.cordillera.dto.RolRequestDTO;
+import cl.duoc.cordillera.dto.RolResponseDTO;
 import cl.duoc.cordillera.entity.Rol;
 import cl.duoc.cordillera.repository.RolRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -77,4 +79,22 @@ public class RolService {
         return rol;
     }
 
+    public RolResponseDTO toDTO(Rol rol) {
+        RolResponseDTO dto = new RolResponseDTO();
+
+        dto.id = rol.id;
+        dto.nombre = rol.nombre;
+        dto.descripcion = rol.descripcion;
+
+        return dto;
+    }
+
+    public Rol fromDTO(RolRequestDTO dto) {
+        Rol rol = new Rol();
+
+        rol.nombre = dto.nombre;
+        rol.descripcion = dto.descripcion;
+
+        return rol;
+    }
 }

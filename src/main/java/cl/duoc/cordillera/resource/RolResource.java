@@ -1,5 +1,7 @@
 package cl.duoc.cordillera.resource;
 
+import cl.duoc.cordillera.dto.RolRequestDTO;
+import cl.duoc.cordillera.dto.RolResponseDTO;
 import cl.duoc.cordillera.entity.Rol;
 import cl.duoc.cordillera.service.RolService;
 
@@ -20,37 +22,49 @@ public class RolResource {
     RolService service;
 
     @GET
-    public List<Rol> getAll() {
-        return service.listarActivos();
+    public List<RolResponseDTO> getAll() {
+        return service.listarActivos()
+                .stream()
+                .map(service::toDTO)
+                .toList();
     }
 
     @GET
     @Path("/{id}")
-    public Rol getById(@PathParam("id") UUID id) {
-        return service.obtenerPorId(id);
+    public RolResponseDTO getById(@PathParam("id") UUID id) {
+        return service.toDTO(service.obtenerPorId(id));
     }
 
     @POST
-    public Response create(Rol rol) {
-        Rol nuevo = service.crear(rol);
-        return Response.status(Response.Status.CREATED).entity(nuevo).build();
+    public Response create(RolRequestDTO dto) {
+
+        Rol rol = service.fromDTO(dto);
+        Rol creado = service.crear(rol);
+
+        return Response.status(Response.Status.CREATED)
+                .entity(service.toDTO(creado))
+                .build();
     }
 
     @PUT
     @Path("/{id}")
-    public Rol update(@PathParam("id") UUID id, Rol rol) {
-        return service.actualizar(id, rol);
+    public RolResponseDTO update(@PathParam("id") UUID id, RolRequestDTO dto) {
+
+        Rol rol = service.fromDTO(dto);
+        Rol actualizado = service.actualizar(id, rol);
+
+        return service.toDTO(actualizado);
     }
 
     @PUT
     @Path("/{id}/activar")
-    public Rol activar(@PathParam("id") UUID id) {
-        return service.activar(id);
+    public RolResponseDTO activar(@PathParam("id") UUID id) {
+        return service.toDTO(service.activar(id));
     }
 
     @PUT
     @Path("/{id}/desactivar")
-    public Rol desactivar(@PathParam("id") UUID id) {
-        return service.desactivar(id);
+    public RolResponseDTO desactivar(@PathParam("id") UUID id) {
+        return service.toDTO(service.desactivar(id));
     }
 }
