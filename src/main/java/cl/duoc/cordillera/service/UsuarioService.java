@@ -1,5 +1,7 @@
 package cl.duoc.cordillera.service;
 
+import cl.duoc.cordillera.dto.UsuarioRequestDTO;
+import cl.duoc.cordillera.dto.UsuarioResponseDTO;
 import cl.duoc.cordillera.entity.Usuario;
 import cl.duoc.cordillera.enums.EstadoUsuario;
 import cl.duoc.cordillera.repository.UsuarioRepository;
@@ -93,6 +95,33 @@ public class UsuarioService {
 
         usuario.estado = EstadoUsuario.ACTIVO;
         usuario.actualizadoEn = LocalDateTime.now();
+
+        return usuario;
+    }
+
+    public UsuarioResponseDTO toDTO(Usuario usuario) {
+        UsuarioResponseDTO dto = new UsuarioResponseDTO();
+
+        dto.id = usuario.id;
+        dto.rut = usuario.rut;
+        dto.nombre = usuario.nombre;
+        dto.apellido = usuario.apellido;
+        dto.email = usuario.email;
+
+        return dto;
+    }
+
+    public Usuario fromDTO(UsuarioRequestDTO dto) {
+        Usuario usuario = new Usuario();
+
+        usuario.rut = dto.rut;
+        usuario.dv = dto.dv;
+        usuario.nombre = dto.nombre;
+        usuario.apellido = dto.apellido;
+        usuario.email = dto.email;
+
+        //En el futuro aquí va hash real
+        usuario.passwordHash = dto.password;
 
         return usuario;
     }

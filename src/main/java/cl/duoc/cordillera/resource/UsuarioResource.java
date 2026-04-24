@@ -1,5 +1,7 @@
 package cl.duoc.cordillera.resource;
 
+import cl.duoc.cordillera.dto.UsuarioRequestDTO;
+import cl.duoc.cordillera.dto.UsuarioResponseDTO;
 import cl.duoc.cordillera.entity.Usuario;
 import cl.duoc.cordillera.service.UsuarioService;
 
@@ -19,21 +21,30 @@ public class UsuarioResource {
     @Inject
     UsuarioService service;
 
-    @GET
-    public List<Usuario> getAll() {
-        return service.listarActivos();
+    public List<UsuarioResponseDTO> getAll() {
+        return service.listarActivos()
+                .stream()
+                .map(service::toDTO)
+                .toList();
     }
 
     @POST
-    public Response create(Usuario usuario) {
-        Usuario nuevo = service.crear(usuario);
-        return Response.status(Response.Status.CREATED).entity(nuevo).build();
+    public Response create(UsuarioRequestDTO dto) {
+
+        Usuario usuario = service.fromDTO(dto);
+        Usuario creado = service.crear(usuario);
+
+        UsuarioResponseDTO response = service.toDTO(creado);
+
+        return Response.status(Response.Status.CREATED)
+                .entity(response)
+                .build();
     }
 
     @GET
     @Path("/{id}")
-    public Usuario getById(@PathParam("id") UUID id) {
-        return service.obtenerPorId(id);
+    public UsuarioResponseDTO getById(UUID id) {
+        return service.toDTO(service.obtenerPorId(id));
     }
 
     @GET

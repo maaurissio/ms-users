@@ -82,7 +82,7 @@ jdbc:postgresql://localhost:5432/db_users
 docker compose up -d       # Levantar servicios
 docker compose down        # Detener servicios
 docker ps                  # Ver contenedores
-docker logs pg-cordillera  # Ver logs de la BD
+docker logs pg-users # Ver logs de la BD
 ```
 
 ---
