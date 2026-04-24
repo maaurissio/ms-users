@@ -21,12 +21,12 @@ public class UsuarioService {
     @Inject
     UsuarioRepository repository;
 
-    // 🔹 Listar activos
+    //Listar activos
     public List<Usuario> listarActivos() {
         return repository.list("estado", EstadoUsuario.ACTIVO);
     }
 
-    // 🔹 Crear usuario
+    //Crear usuario
     @Transactional
     public Usuario crear(Usuario usuario) {
 
@@ -51,13 +51,13 @@ public class UsuarioService {
         return usuario;
     }
 
-    // 🔹 Buscar por ID
+    //Buscar por ID
     public Usuario obtenerPorId(UUID id) {
         return repository.findByIdOptional(id)
                 .orElseThrow(() -> new NotFoundException("Usuario no encontrado"));
     }
 
-    // 🔹 Buscar por nombre
+    //Buscar por nombre
     public List<Usuario> buscarPorNombre(String nombre) {
 
         if (nombre == null || nombre.isBlank()) {
@@ -73,7 +73,7 @@ public class UsuarioService {
         );
     }
 
-    // 🔹 Desactivar
+    //Desactivar
     @Transactional
     public Usuario desactivar(UUID id) {
 
@@ -85,7 +85,7 @@ public class UsuarioService {
         return usuario;
     }
 
-    // 🔹 Activar
+    //Activar
     @Transactional
     public Usuario activar(UUID id) {
 
