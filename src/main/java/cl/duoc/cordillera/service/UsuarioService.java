@@ -5,7 +5,7 @@ import cl.duoc.cordillera.dto.UsuarioResponseDTO;
 import cl.duoc.cordillera.entity.Usuario;
 import cl.duoc.cordillera.enums.EstadoUsuario;
 import cl.duoc.cordillera.repository.UsuarioRepository;
-
+import cl.duoc.cordillera.repository.UsuarioRolRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -22,6 +22,9 @@ public class UsuarioService {
 
     @Inject
     UsuarioRepository repository;
+
+    @Inject
+    UsuarioRolRepository usuarioRolRepository;
 
     //Listar activos
     public List<Usuario> listarActivos() {
@@ -107,6 +110,11 @@ public class UsuarioService {
         dto.nombre = usuario.nombre;
         dto.apellido = usuario.apellido;
         dto.email = usuario.email;
+
+        dto.roles = usuarioRolRepository.listarRolesPorUsuario(usuario)
+                .stream()
+                .map(usuarioRol -> usuarioRol.rol.nombre)
+                .toList();
 
         return dto;
     }

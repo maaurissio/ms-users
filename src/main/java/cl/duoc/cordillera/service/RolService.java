@@ -6,7 +6,9 @@ import java.util.UUID;
 
 import cl.duoc.cordillera.dto.RolRequestDTO;
 import cl.duoc.cordillera.dto.RolResponseDTO;
+import cl.duoc.cordillera.dto.UsuarioRolResponseDTO;
 import cl.duoc.cordillera.entity.Rol;
+import cl.duoc.cordillera.entity.UsuarioRol;
 import cl.duoc.cordillera.repository.RolRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -96,5 +98,22 @@ public class RolService {
         rol.descripcion = dto.descripcion;
 
         return rol;
+    }
+
+    public UsuarioRolResponseDTO toDTO(UsuarioRol ur) {
+
+        UsuarioRolResponseDTO dto = new UsuarioRolResponseDTO();
+
+        dto.id = ur.id;
+
+        dto.usuarioId = ur.usuario.id;
+        dto.nombreUsuario = ur.usuario.nombre;
+
+        dto.rolId = ur.rol.id;
+        dto.nombreRol = ur.rol.nombre;
+
+        dto.asignadoEn = ur.asignadoEn;
+
+        return dto;
     }
 }

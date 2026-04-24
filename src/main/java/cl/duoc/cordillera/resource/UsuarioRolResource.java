@@ -1,5 +1,7 @@
 package cl.duoc.cordillera.resource;
 
+import cl.duoc.cordillera.dto.UsuarioRolRequestDTO;
+import cl.duoc.cordillera.dto.UsuarioRolResponseDTO;
 import cl.duoc.cordillera.entity.UsuarioRol;
 import cl.duoc.cordillera.service.UsuarioRolService;
 
@@ -20,30 +22,47 @@ public class UsuarioRolResource {
     UsuarioRolService service;
 
     @POST
-    @Path("/asignar")
-    public Response asignarRol(
-            @QueryParam("usuarioId") UUID usuarioId,
-            @QueryParam("rolId") UUID rolId
-    ) {
-        UsuarioRol asignacion = service.asignarRol(usuarioId, rolId);
-        return Response.status(Response.Status.CREATED).entity(asignacion).build();
+    public Response asignarRol(UsuarioRolRequestDTO dto) {
+
+        UsuarioRol ur = service.asignarRol(dto);
+
+        return Response.status(Response.Status.CREATED)
+                .entity(service.toDTO(ur))
+                .build();
+    }
+
+    @GET
+    public List<UsuarioRolResponseDTO> getAll() {
+
+        return service.listarActivos()
+                .stream()
+                .map(service::toDTO)
+                .toList();
     }
 
     @GET
     @Path("/usuario/{usuarioId}")
-    public List<UsuarioRol> listarRolesPorUsuario(@PathParam("usuarioId") UUID usuarioId) {
-        return service.listarRolesPorUsuario(usuarioId);
+    public List<UsuarioRolResponseDTO> listarRolesPorUsuario(@PathParam("usuarioId") UUID id) {
+
+        return service.listarRolesPorUsuario(id)
+                .stream()
+                .map(service::toDTO)
+                .toList();
     }
 
     @GET
     @Path("/rol/{rolId}")
-    public List<UsuarioRol> listarUsuariosPorRol(@PathParam("rolId") UUID rolId) {
-        return service.listarUsuariosPorRol(rolId);
+    public List<UsuarioRolResponseDTO> listarUsuariosPorRol(@PathParam("rolId") UUID id) {
+
+        return service.listarUsuariosPorRol(id)
+                .stream()
+                .map(service::toDTO)
+                .toList();
     }
 
     @PUT
     @Path("/{id}/desactivar")
-    public UsuarioRol desactivarAsignacion(@PathParam("id") UUID id) {
-        return service.desactivarAsignacion(id);
+    public UsuarioRolResponseDTO desactivarAsignacion(@PathParam("id") UUID id) {
+        return service.toDTO(service.desactivarAsignacion(id));
     }
 }

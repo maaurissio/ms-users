@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import cl.duoc.cordillera.dto.UsuarioRolRequestDTO;
+import cl.duoc.cordillera.dto.UsuarioRolResponseDTO;
 import cl.duoc.cordillera.entity.Rol;
 import cl.duoc.cordillera.entity.Usuario;
 import cl.duoc.cordillera.entity.UsuarioRol;
@@ -28,28 +30,32 @@ public class UsuarioRolService {
     @Inject
     RolRepository rolRepository;
 
-    @Transactional
-    public UsuarioRol asignarRol(UUID usuarioId, UUID rolId) {
+    public List<UsuarioRol> listarActivos() {
+        return usuarioRolRepository.list("activo", true);
+    }
 
-        Usuario usuario = usuarioRepository.findByIdOptional(usuarioId)
+    @Transactional
+    public UsuarioRol asignarRol(UsuarioRolRequestDTO dto) {
+
+        Usuario usuario = usuarioRepository.findByIdOptional(dto.usuarioId)
                 .orElseThrow(() -> new NotFoundException("Usuario no encontrado"));
 
-        Rol rol = rolRepository.findByIdOptional(rolId)
+        Rol rol = rolRepository.findByIdOptional(dto.rolId)
                 .orElseThrow(() -> new NotFoundException("Rol no encontrado"));
 
         if (usuarioRolRepository.existeAsignacionActiva(usuario, rol)) {
-            throw new WebApplicationException("El usuario ya tiene este rol asignado", 409);
+            throw new WebApplicationException("El usuario ya tiene este rol", 409);
         }
 
-        UsuarioRol usuarioRol = new UsuarioRol();
-        usuarioRol.usuario = usuario;
-        usuarioRol.rol = rol;
-        usuarioRol.asignadoEn = LocalDateTime.now();
-        usuarioRol.activo = true;
+        UsuarioRol ur = new UsuarioRol();
+        ur.usuario = usuario;
+        ur.rol = rol;
+        ur.asignadoEn = LocalDateTime.now();
+        ur.activo = true;
 
-        usuarioRolRepository.persist(usuarioRol);
+        usuarioRolRepository.persist(ur);
 
-        return usuarioRol;
+        return ur;
     }
 
     public List<UsuarioRol> listarRolesPorUsuario(UUID usuarioId) {
@@ -77,6 +83,23 @@ public class UsuarioRolService {
         usuarioRol.activo = false;
 
         return usuarioRol;
+    }
+
+    public UsuarioRolResponseDTO toDTO(UsuarioRol ur) {
+
+        UsuarioRolResponseDTO dto = new UsuarioRolResponseDTO();
+
+        dto.id = ur.id;
+
+        dto.usuarioId = ur.usuario.id;
+        dto.nombreUsuario = ur.usuario.nombre;
+
+        dto.rolId = ur.rol.id;
+        dto.nombreRol = ur.rol.nombre;
+
+        dto.asignadoEn = ur.asignadoEn;
+
+        return dto;
     }
 
 }
