@@ -30,9 +30,6 @@ public class Usuario extends PanacheEntityBase {
     @Column(nullable = false, unique = true)
     public String email;
 
-    @Column(nullable = false)
-    public String passwordHash;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     public EstadoUsuario estado;

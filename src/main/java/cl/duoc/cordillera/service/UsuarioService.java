@@ -43,10 +43,6 @@ public class UsuarioService {
             throw new WebApplicationException("Email ya existe", 409);
         }
 
-        if (usuario.passwordHash == null || usuario.passwordHash.isBlank()) {
-            throw new WebApplicationException("Password requerido", 400);
-        }
-
         usuario.estado = EstadoUsuario.ACTIVO;
         usuario.creadoEn = LocalDateTime.now();
         usuario.actualizadoEn = LocalDateTime.now();
@@ -128,8 +124,6 @@ public class UsuarioService {
         usuario.apellido = dto.apellido;
         usuario.email = dto.email;
 
-        //En el futuro aquí va hash real
-        usuario.passwordHash = dto.password;
 
         return usuario;
     }
